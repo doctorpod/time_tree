@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+require 'time_log'
+
+tree = ActivityTree.new
+parser = FileParser.new(tree)
+parser.process_file(ARGV[0])
+
+if parser.valid?
+  tree.print
+else
+  STDERR.puts "ERRORS:"
+  STDERR.puts parser.errors.join("\n")
+end

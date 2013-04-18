@@ -8,8 +8,8 @@ Gem::Specification.new do |gem|
   gem.version       = TimeLog::VERSION
   gem.authors       = ["Andy White"]
   gem.email         = ["andy@wireworldmedia.co.uk"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = %q{Summarises a time file}
+  gem.summary       = %q{Summarises a time file}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($/)
