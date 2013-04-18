@@ -1,0 +1,16 @@
+0755 i/bug - failing article filtering - on train
+0825 -
+0910 i/bug
+0925 i/sysadm - fixing dead teamcity with Al
+0955 i/bug
+1025 i/adm emails
+1040 i/adm weekly update meeting
+1110 i/sysadm - learning how to do end of sprint release
+1135 i/adm tech scrum
+1200 i/bug/1760 optimise edit schedules page
+1255 - lunch
+1355 i/adm listening in on user meeting
+1405 i/sysadm release to live & sanity test
+1505 i/bug/1760
+1750 i/adm log time
+1800 -
