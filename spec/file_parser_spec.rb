@@ -67,6 +67,10 @@ module TimeLog
     end
     
     describe '#parse_line' do
+      before do
+        parser.set_file('my_file.txt')
+      end
+      
       context "normal lines" do
         context "normal activities" do
           it "returns true and remains valid" do

@@ -4,10 +4,14 @@ module TimeLog
 
     def initialize(tree)
       @errors = []
+      @activity_tree = tree
+    end
+    
+    def set_file(path)
+      @path = path
       @line_number = 0
       @prev_mins = nil
       @prev_activities = nil
-      @activity_tree = tree
     end
     
     def process_file(path)
@@ -15,6 +19,7 @@ module TimeLog
         if File.directory?(path)
           process_folder(path)
         else
+          set_file(path)
           File.read(path).each_line {|line| parse_line(line) }
           true
         end
@@ -40,7 +45,7 @@ module TimeLog
             if minutes > @prev_mins
               process_line(minutes, @prev_activities) unless @prev_activities == '-'
             else
-              @errors << "#{"%2d" % @line_number}: #{line.chomp} - time does not advance"
+              add_error(line, 'time does not advance')
               return false
             end
           end
@@ -52,9 +57,13 @@ module TimeLog
           false
         end
       else
-        @errors << "#{"%2d" % @line_number}: #{line.chomp} - line not understood"
+        add_error(line, 'line not understood')
         false
       end
+    end
+    
+    def add_error(line, message)
+      @errors << "%s:%d: %s - %s" % [File.basename(@path), @line_number, line.chomp, message]
     end
     
     def valid?
@@ -75,7 +84,7 @@ module TimeLog
       if hours <= 23 && mins <= 59
         (hours * 60) + mins
       else
-        @errors << "#{"%2d" % @line_number}: #{str} - invalid time"
+        add_error(str, 'invalid time')
         false
       end
     end
