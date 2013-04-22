@@ -28,7 +28,7 @@ module TimeLog
         if minutes = mins(fields.first)
           unless @prev_mins.nil?
             if minutes > @prev_mins
-              process_line(minutes, @prev_activities)
+              process_line(minutes, @prev_activities) unless @prev_activities == '-'
             else
               @errors << "#{"%2d" % @line_number}: #{line.chomp} - time does not advance"
               return false

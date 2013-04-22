@@ -41,20 +41,35 @@ module TimeLog
     
     describe '#parse_line' do
       context "normal lines" do
+        context "normal activities" do
+          it "returns true and remains valid" do
+            parser.parse_line("1634 adm/foo/bar dhffhkdhsdhjdf").should be_true
+            parser.parse_line("1635 adm/foo/bar dhffh kdh sdhjdf  ").should be_true
+            parser.parse_line("1636    adm/foo/bar     dhffh kdh sdhjdf  ").should be_true
+            parser.parse_line("1637 adm").should be_true
+            parser.parse_line("1638 -").should be_true
+            parser.parse_line("1639 - sdf sdfs sfsad").should be_true
+            parser.valid?.should be_true
+          end
+        
+          it "calls ActivityTree#load after first line" do
+            tree.should_receive(:load).with(%w{adm foo bar}, 1).once
+            parser.parse_line("1634 adm/foo/bar dhffhkdhsdhjdf")
+            parser.parse_line("1635 -")
+          end
+        end
+      end
+      
+      context "dash for activity" do
         it "returns true and remains valid" do
-          parser.parse_line("1634 adm/foo/bar dhffhkdhsdhjdf").should be_true
-          parser.parse_line("1635 adm/foo/bar dhffh kdh sdhjdf  ").should be_true
-          parser.parse_line("1636    adm/foo/bar     dhffh kdh sdhjdf  ").should be_true
-          parser.parse_line("1637 adm").should be_true
-          parser.parse_line("1638 -").should be_true
-          parser.parse_line("1639 - sdf sdfs sfsad").should be_true
+          parser.parse_line("1634 -").should be_true
           parser.valid?.should be_true
         end
         
-        it "calls ActivityTree#load after first line" do
-          tree.should_receive(:load).with(%w{adm foo bar}, 1).once
-          parser.parse_line("1634 adm/foo/bar dhffhkdhsdhjdf")
-          parser.parse_line("1635 -")
+        it "does not call ActivityTree#load after first line" do
+          tree.should_not_receive(:load).with(%w{-}, 1)
+          parser.parse_line("1634 -")
+          parser.parse_line("1635 foo")
         end
       end
 
