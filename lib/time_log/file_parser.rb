@@ -26,7 +26,7 @@ module TimeLog
     
     def process_folder(path)
       Dir.new(path).each do |file|
-        process_file(file) unless ['.', '..'].include?(file)
+        process_file(File.join(path, file)) unless ['.', '..'].include?(file)
       end
     end
     

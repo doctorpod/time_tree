@@ -60,7 +60,8 @@ module TimeLog
       end
       
       it "calls #process_file for each contained file" do
-        parser.should_receive(:process_file).twice
+        parser.should_receive(:process_file).with(fixtures('real.txt')).once
+        parser.should_receive(:process_file).with(fixtures('time.txt')).once
         parser.process_folder(fixtures)
       end
     end
