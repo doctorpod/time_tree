@@ -12,11 +12,21 @@ module TimeLog
     
     def process_file(path)
       if File.exist?(path)
-        File.read(path).each_line {|line| parse_line(line) }
-        true
+        if File.directory?(path)
+          process_folder(path)
+        else
+          File.read(path).each_line {|line| parse_line(line) }
+          true
+        end
       else
         @errors << "File not found: #{path}"
         false
+      end
+    end
+    
+    def process_folder(path)
+      Dir.new(path).each do |file|
+        process_file(file) unless ['.', '..'].include?(file)
       end
     end
     

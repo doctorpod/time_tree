@@ -8,7 +8,22 @@ module TimeLog
     let(:parser) { FileParser.new(tree) }
     
     describe "#process_file" do
-      context "file found" do
+      context "is a directory" do
+        before do
+          FileParser.any_instance.stub(:process_folder => true)
+        end
+        
+        it "returns true" do
+          parser.process_file(fixtures).should be_true
+        end
+        
+        it "calls #process_folder" do
+          parser.should_receive(:process_folder).with(fixtures).once
+          parser.process_file(fixtures)
+        end
+      end
+      
+      context "is a file" do
         before do
           FileParser.any_instance.stub(:parse_line => true)
         end
@@ -23,7 +38,7 @@ module TimeLog
         end
       end
       
-      context "file not found" do
+      context "file or directory not found" do
         before do
           @result = parser.process_file('does/not/exist')
         end
@@ -36,6 +51,17 @@ module TimeLog
           parser.errors.size.should == 1
           parser.valid?.should be_false
         end
+      end
+    end
+
+    describe "#process_folder" do
+      before do
+        FileParser.any_instance.stub(:process_file => true)
+      end
+      
+      it "calls #process_file for each contained file" do
+        parser.should_receive(:process_file).twice
+        parser.process_folder(fixtures)
       end
     end
     
