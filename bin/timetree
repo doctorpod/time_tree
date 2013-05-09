@@ -1,43 +1,47 @@
 #!/usr/bin/env ruby
 $:.unshift File.expand_path(File.join('..', '..', 'lib'), __FILE__)
-require 'time_log'
+require 'time_tree'
 require 'optparse'
 
-module TimeLog
+module TimeTree
   options = {:today => true}
   
   option_parser = OptionParser.new do |opts|
     opts.banner = "Usage: #{File.basename($0)} [options] [data_path]"
     
+    opts.on('-a', '--all') do
+      options[:all] = true
+      options[:today] = false
+    end
+    
     opts.on('-t', '--today') do
+      options[:all] = false
       options[:today] = true
     end
     
     opts.on('-y', '--yesterday') do
       options[:yesterday] = true
+      options[:all] = false
+      options[:today] = false
     end
     
     opts.on('-w [WEEKS_PREVIOUS]', '--week', 'The current week is the default') do |weeks_previous|
-      if weeks_previous && weeks_previous.to_i == 0
-        puts "Weeks previous must be a number greater than zero"
-        exit 1
-      else
-        options[:week] = weeks_previous.to_i || 0
-      end
+      options[:week] = weeks_previous.to_i || 0
+      options[:all] = false
+      options[:today] = false
     end
     
     opts.on('-m [MONTHS_PREVIOUS]', '--month', 'The current month is the default') do |months_previous|
-      if months_previous && months_previous.to_i == 0
-        puts "Months previous must be a number greater than zero"
-        exit 1
-      else
-        options[:month] = months_previous.to_i || 0
-      end
+      options[:month] = months_previous.to_i || 0
+      options[:all] = false
+      options[:today] = false
     end
 
     opts.on('-d DATE', '--date', 'Date must be of format YYYY/MM/DD') do |date|
       if date =~ /\d\d\d\d\/\d\d\/\d\d/
         options[:date] = date
+        options[:all] = false
+        options[:today] = false
       else
         puts "Invalid date format. Must be YYYY/MM/DD"
         exit 1
@@ -47,6 +51,8 @@ module TimeLog
     opts.on('-r RANGE', '--range', 'Range must be of format YYYY/MM/DD:YYYY/MM/DD') do |range|
       if range =~ /\d\d\d\d\/\d\d\/\d\d:\d\d\d\d\/\d\d\/\d\d/
         options[:range] = range
+        options[:all] = false
+        options[:today] = false
       else
         puts "Invalid date range. Must be YYYY/MM/DD:YYYY/MM/DD"
         exit 1
@@ -58,19 +64,26 @@ module TimeLog
     end
   end  
   
-  option_parser.parse!
-  puts options.inspect
-  puts ARGV.inspect
-  
+  option_parser.parse!  
   tree = ActivityTree.new
   parser = FileParser.new(tree, options)
-  parser.process_file(ARGV[0])
+  
+  if ARGV[0]
+    parser.process_file(ARGV[0])
+  else
+    home = ENV['HOME']
+    path = parser.find_path([File.join(home, 'Time'), File.join(home, 'time'),
+             File.join(home, '.time')])
+    parser.process_file(path) if path
+  end
 
   if parser.valid?
     tree.process
     tree.print
+    exit 0
   else
     STDERR.puts "ERRORS:"
     STDERR.puts parser.errors.join("\n")
+    exit 1
   end
 end

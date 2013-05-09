@@ -1,6 +1,6 @@
-require 'time_log/activity_tree'
+require 'time_tree/activity_tree'
 
-module TimeLog
+module TimeTree
   describe ActivityTree do
     let(:tree) { ActivityTree.new }
 

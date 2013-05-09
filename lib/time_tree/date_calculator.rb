@@ -1,6 +1,6 @@
 require 'date'
 
-module TimeLog
+module TimeTree
   module DateCalculator
     def prev_weekday(date, weekday, count = 0)
       delta = (7 + date.wday - daynum(weekday)) % 7

@@ -1,8 +1,8 @@
-require 'time_log/activity_tree'
-require 'time_log/file_parser'
+require 'time_tree/activity_tree'
+require 'time_tree/file_parser'
 require 'helper'
 
-module TimeLog
+module TimeTree
   describe 'Integration' do
     let(:tree) { ActivityTree.new }
     

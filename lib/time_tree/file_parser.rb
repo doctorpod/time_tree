@@ -1,7 +1,7 @@
 require 'date'
-require 'time_log/date_calculator'
+require 'time_tree/date_calculator'
 
-module TimeLog
+module TimeTree
   class FileParser
     include DateCalculator 
     attr_reader :errors
@@ -10,6 +10,15 @@ module TimeLog
       @errors = []
       @activity_tree = tree
       @options = options
+    end
+    
+    def find_path(paths)
+      paths.each do |path|
+        return path if File.exist?(path)
+      end
+      
+      @errors << "File not found in: #{paths.join(', ')}"
+      false
     end
     
     def set_file(path)
@@ -29,7 +38,6 @@ module TimeLog
           process_folder(path)
         else
           set_file(path)
-puts 'reading '+path
           File.read(path).each_line {|line| parse_line(line) }
           true
         end
@@ -54,18 +62,14 @@ puts 'reading '+path
         true
 
       when /^(\d\d\d\d\/\d\d\/\d\d) *.*$/
-puts 'its a date '+$1
         set_date($1)
         true
 
       when /^(\d\d\d\d) +([^ ]+) *.*$/
-puts 'its a time '+$1+':'+$2
         if minutes = mins($1)
           unless @prev_mins.nil?
             if minutes > @prev_mins
-puts 'mins have advanced'
               if @prev_activities != '-' && selected?(@date, @prev_activities)
-puts 'proc line'
                 process_line(minutes, @prev_activities) 
               end
             else
@@ -101,6 +105,7 @@ puts 'proc line'
       
       (
         options.detect { |key, val| date_options.include?(key) }.nil? ||
+          options[:all] ||
           options[:today] && parsed_date == Date.today ||
           options[:yesterday] && parsed_date == Date.today-1 ||
           options[:week] && in_prev_week?(parsed_date, options[:week]) ||
@@ -123,6 +128,7 @@ puts 'proc line'
     end
 
     def mins(str)
+      return 1440 if str == '0000' && @prev_mins
       hours = str[0..1].to_i
       mins  = str[2..3].to_i
 

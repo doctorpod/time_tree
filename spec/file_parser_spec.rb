@@ -1,11 +1,22 @@
-require 'time_log/file_parser'
+require 'time_tree/file_parser'
 require 'helper'
 
-module TimeLog
+module TimeTree
   describe FileParser do
     let(:tree) { mock('ActivityTree', :load => nil) }
     let(:parser) { FileParser.new(tree, {}) }
+    let(:home) { ENV['HOME'] }
 
+    describe "#find_path" do
+      it "finds a path" do
+        parser.find_path(['/not/on/your/nelly', "#{home}/.bash_profile"]).should =~ /bash_profile/
+      end
+      
+      it "finds no path" do
+        parser.find_path(['/not/on/your/nelly', "#/not/there"]).should be_false
+      end
+    end
+    
     describe "#process_file" do
       context "is a directory" do
         before do
@@ -242,6 +253,22 @@ module TimeLog
 
         it "finds no hit" do
           parser.selected?('1962/01/03', 'foo/bar', {:filter => ['blork', 'flange']}).should be_false
+        end
+      end
+    end
+
+    describe "midnight edge case" do
+      context "no previous mins" do
+        it "returns 0 mins" do
+          parser.send(:mins, '0000').should == 0
+        end
+      end
+      
+      context "previous mins" do
+        it "returns 1440 mins (1 day)" do
+          parser.set_file('afile')
+          parser.parse_line('2359 foo')
+          parser.send(:mins, '0000').should == 1440
         end
       end
     end

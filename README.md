@@ -4,7 +4,7 @@ Timetree is a command line utility that prints a tree-like breakdown of time spe
 
 ## Installation
 
-    $ gem install time_log
+    $ gem install time_tree
 
 ## Time Log Format
 
@@ -27,7 +27,7 @@ Here's an example:
     2315 -
 
 
-A day's log can't span across more than one file, but a file may contain multiple day's logs. This gives flexibility, all time may be stored in one big file or there may be multiple files, one for each day or each week for example. Multiple files may be stored in a nested folder hierarchy - time tree will recursively search for files, ignoring those starting with . (dot).
+A day's log can't span across more than one file, but a file may contain multiple day's logs. This gives flexibility, all time may be stored in one big file or there may be multiple files, one for each day or week for example. Multiple files may be stored in a nested folder hierarchy - time tree will recursively search for files, ignoring those starting with . (dot).
 
 ## Usage
 
@@ -37,12 +37,13 @@ A day's log can't span across more than one file, but a file may contain multipl
 
 Reports on the given date or period. Weeks are deemed to start on Monday.
 
+  * *--all*, *-a* - include all dates recorded
   * *--today*, *-t* - this is the assumed default
   * *--yesterday*, *-y*
   * *--week [weeks-previous]*, *-w* - the current week so far. To report on previous weeks use the optional *weeks-previous* argument, 0 (the assumed default) would mean the current week, 1 would mean last week, 2 would mean the week previous to that and so on.
   * *--month [months-previous]*, *-m* - the current calendar month so far. The optional *months-revious* argument works in a similar way to *--week weeks-previous*
   * *--date YYYY/MM/DD*, *-d*
-  * *--between YYYY/MM/DD YYYY/MM/DD*, *-b* - reports on the given inclusive range of dates
+  * *--between YYYY/MM/DD:YYYY/MM/DD*, *-b* - reports on the given inclusive range of dates
   * *--filter search-string[,search-string]*, *-f* - only reports on activities matching *search-string*
 
 If given no path, Timetree will look in the users's home directory for a file or directory called *Time*, *time* or *.time*.

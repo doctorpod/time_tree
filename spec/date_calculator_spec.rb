@@ -1,6 +1,6 @@
-require 'time_log/date_calculator'
+require 'time_tree/date_calculator'
 
-module TimeLog
+module TimeTree
   describe DateCalculator do
     include DateCalculator
     
