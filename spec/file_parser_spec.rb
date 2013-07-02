@@ -142,8 +142,8 @@ module TimeTree
           end
 
           it "calls ActivityTree#load after first line" do
-            tree.should_receive(:load).with(%w{adm foo bar}, 1).once
-            parser.parse_line("1634 adm/foo/bar dhffhkdhsdhjdf")
+            tree.should_receive(:load).with(%w{adm foo bar}, 1, 'blart flange').once
+            parser.parse_line("1634 adm/foo/bar blart flange")
             parser.parse_line("1635 -")
           end
 

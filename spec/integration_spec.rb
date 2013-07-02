@@ -11,9 +11,9 @@ module TimeTree
       parser.process_file(fixtures('time'))
       tree.process
       tree.output[0].should =~ /All +6 min/
-      tree.output[1].should =~ /jun1stuff +1 min/
-      tree.output[2].should =~ /jun2stuff +2 min/
-      tree.output[3].should =~ /jun3stuff +3 min/
+      tree.output[1].should =~ /jun1stuff +1 min \(0:01\) +jun1/
+      tree.output[2].should =~ /jun2stuff +2 min \(0:02\) +jun2/
+      tree.output[3].should =~ /jun3stuff +3 min \(0:03\) +jun3/
       tree.output.size.should == 4
     end
     

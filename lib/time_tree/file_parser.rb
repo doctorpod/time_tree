@@ -30,6 +30,7 @@ module TimeTree
       @date = date
       @prev_mins = nil
       @prev_activities = nil
+      @prev_comment = nil
     end
     
     def process_file(path)
@@ -65,12 +66,12 @@ module TimeTree
         set_date($1)
         true
 
-      when /^(\d\d\d\d) +([^ ]+) *.*$/
+      when /^(\d\d\d\d) +([-\w\/]+) *(.*)$/
         if minutes = mins($1)
           unless @prev_mins.nil?
             if minutes > @prev_mins
               if @prev_activities != '-' && selected?(@date, @prev_activities)
-                process_line(minutes, @prev_activities) 
+                process_line(minutes, @prev_activities, @prev_comment) 
               end
             else
               add_error(line, 'time does not advance')
@@ -80,6 +81,7 @@ module TimeTree
            
           @prev_mins = minutes
           @prev_activities = $2
+          @prev_comment = $3
           true
         else
           false
@@ -122,9 +124,9 @@ module TimeTree
     
     private
 
-    def process_line(minutes, activities)
+    def process_line(minutes, activities, comment)
       duration = minutes - @prev_mins
-      @activity_tree.load(activities.split('/'), duration)
+      @activity_tree.load(activities.split('/'), duration, comment)
     end
 
     def mins(str)
