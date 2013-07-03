@@ -42,7 +42,7 @@ module TimeTree
           parser.process_file(fixtures('time.txt')).should be_true
         end
 
-        it "calls process_line for each line of the file" do
+        it "calls parse_line for each line of the file" do
           parser.should_receive(:parse_line).exactly(3).times
           parser.process_file(fixtures('time.txt'))
         end
@@ -145,6 +145,12 @@ module TimeTree
             tree.should_receive(:load).with(%w{adm foo bar}, 1, 'blart flange').once
             parser.parse_line("1634 adm/foo/bar blart flange")
             parser.parse_line("1635 -")
+          end
+          
+          it "handles absent descriptions" do
+            tree.should_receive(:load).with(%w{adm foo bar}, 1, nil).once
+            parser.parse_line("1734 adm/foo/bar")
+            parser.parse_line("1735 -")
           end
 
           it "flags invalid times" do

@@ -80,8 +80,8 @@ module TimeTree
           end
            
           @prev_mins = minutes
-          @prev_activities = $2
-          @prev_comment = $3
+          @prev_activities = $2.strip
+          @prev_comment = $3.size > 0 ? $3 : nil
           true
         else
           false

@@ -8,26 +8,26 @@ Timetree is a command line utility that prints a tree-like breakdown of time spe
 
 ## Time Log Format
 
-Each day's log should start with a date in YYYY/MM/DD format. Any text following is ignored as comments. Following this are lines starting with a time in 24 hour format - HHMI, followed by an activity which must contain no spaces, any text following is ignored and considered as comments. Activities may have nested subcategories to any level separated by forward slashes - these will be printed as a hierarchy by timetree. Use a dash (-) for the activity to be ignored and not reported on - this means a day's log must always end with a time followed by a dash to denote when the previous line's activity finished.
+Each day's log should start with a date in YYYY/MM/DD format. Any text following is ignored. Following this are lines starting with a time in 24 hour format - HHMI, followed by an activity which must contain no spaces, any text following can be free form and is treated as a description. Activities may have nested subcategories to any level separated by forward slashes - these will be printed as a hierarchy by timetree. Use a dash (-) for the activity to be ignored and not reported on - this means a day's log must always end with a time followed by a dash to denote when the previous line's activity finished.
 
-Blank lines are ignored and lines starting with # are ignored as comments.
+Blank lines are ignored. Sequences starting with # to the end of the line are ignored as comments.
 
 Here's an example:
 
-    2013/04/21 A splendid day!
+    2013/04/21 A splendid day! This text after the date will be ignored
     
-    0930 admin some comments
-    0945 development/project1 some more comments
+    0930 admin This is a description
+    0945 development/project1 Some more descriptive text
     1005 -
     1030 developemnt/project2
     1115 -
     
-    # Did some work in the evening!
-    2230 bugfixing/project3  # Use a hash after a time line if you want but not needed
+    # Did some work in the evening! This is a comment that will be ignored
+    2230 bugfixing/project3 a description   # This will be ignored because it's a comment
     2315 -
 
 
-A day's log can't span across more than one file, but a file may contain multiple day's logs. This gives flexibility, all time may be stored in one big file or there may be multiple files, one for each day or week for example. Multiple files may be stored in a nested folder hierarchy - time tree will recursively search for files, ignoring those starting with . (dot).
+A day's log can not span across more than one file, but a file may contain multiple day's logs. This gives flexibility, all time may be stored in one big file or there may be multiple files, one for each day or week for example. Multiple files may be stored in a nested folder hierarchy - time tree will recursively search for files, ignoring those starting with . (dot).
 
 ## Usage
 

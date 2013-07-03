@@ -5,7 +5,8 @@ module TimeTree
     let(:tree) { ActivityTree.new }
 
     before do
-      tree.load(%w{foo bar baz}, 10, 'did baz')
+      tree.load(%w{foo bar baz}, 9, 'did baz')
+      tree.load(%w{foo bar baz}, 1, nil)
       tree.load(%w{foo bar bam}, 5, 'did some bam')
       tree.load(%w{blah}, 11, 'did serious blah')
       tree.load(%w{blah}, 1, 'did more blah')
@@ -19,8 +20,8 @@ module TimeTree
       tree.activities['All'][:children]['foo'][:minutes].should == 15
     end
 
-    it "foo should have no comments" do
-      tree.activities['All'][:children]['foo'][:comments].size.should == 0
+    it "foo should have no descriptions" do
+      tree.activities['All'][:children]['foo'][:descriptions].size.should == 0
     end
 
     it "bar should have 15 mins" do
@@ -31,9 +32,9 @@ module TimeTree
       tree.activities['All'][:children]['foo'][:children]['bar'][:children]['baz'][:minutes].should == 10
     end
 
-    it "baz should have 1 comment" do
-      tree.activities['All'][:children]['foo'][:children]['bar'][:children]['baz'][:comments].size.should == 1
-      tree.activities['All'][:children]['foo'][:children]['bar'][:children]['baz'][:comments].first.should == 'did baz'
+    it "baz should have 1 description" do
+      tree.activities['All'][:children]['foo'][:children]['bar'][:children]['baz'][:descriptions].size.should == 1
+      tree.activities['All'][:children]['foo'][:children]['bar'][:children]['baz'][:descriptions].first.should == 'did baz'
     end
 
     it "bam should have 5 mins" do
@@ -44,10 +45,10 @@ module TimeTree
       tree.activities['All'][:children]['blah'][:minutes].should == 12
     end
 
-    it "blah should have 2 comments" do
-      tree.activities['All'][:children]['blah'][:comments].size.should == 2
-      tree.activities['All'][:children]['blah'][:comments].first.should == 'did serious blah'
-      tree.activities['All'][:children]['blah'][:comments].last.should == 'did more blah'
+    it "blah should have 2 descriptions" do
+      tree.activities['All'][:children]['blah'][:descriptions].size.should == 2
+      tree.activities['All'][:children]['blah'][:descriptions].first.should == 'did serious blah'
+      tree.activities['All'][:children]['blah'][:descriptions].last.should == 'did more blah'
     end
 
     it "blah should have no children" do
