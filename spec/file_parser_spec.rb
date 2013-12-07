@@ -126,9 +126,7 @@ module TimeTree
       end
 
       context "time lines" do
-        before do
-          parser.set_date('2013/01/02')
-        end
+        before { parser.set_date('2013/01/02') }
 
         context "normal activities" do
           it "returns true and remains valid" do
@@ -177,6 +175,34 @@ module TimeTree
           tree.should_not_receive(:load).with(%w{-}, 1)
           parser.parse_line("1634 -")
           parser.parse_line("1635 foo")
+        end
+      end
+
+      context "ampersand for activity (ditto last activity)" do
+        before { parser.set_date('2013/01/02') }
+
+        it "returns true and remains valid" do
+          parser.parse_line("1634 &").should be_true
+          parser.valid?.should be_true
+        end
+
+        context "Previous activity immediately before" do
+          it "calls ActivityTree#load with previous activity" do
+            tree.should_receive(:load).with(%w{foo}, 1, nil).twice
+            parser.parse_line("1634 foo")
+            parser.parse_line("1635 &")
+            parser.parse_line("1636 bar")
+          end
+        end
+
+        context "Previous activity separated by -" do
+          it "calls ActivityTree#load with previous activity" do
+            tree.should_receive(:load).with(%w{foo}, 1, nil).twice
+            parser.parse_line("1633 foo")
+            parser.parse_line("1634 -")
+            parser.parse_line("1635 &")
+            parser.parse_line("1636 bar")
+          end
         end
       end
 
