@@ -1,0 +1,1 @@
+Pending When filter is used activities using & are ignored even if the ywould have matched
