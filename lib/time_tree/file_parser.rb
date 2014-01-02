@@ -29,7 +29,7 @@ module TimeTree
     def set_date(date)
       @date = date
       @prev_mins = nil
-      @prev_activities = nil
+      @prev_activity = nil
       @prev_context = nil
       @prev_comment = nil
     end
@@ -71,7 +71,7 @@ module TimeTree
         if minutes = mins($1)
           unless @prev_mins.nil?
             if minutes > @prev_mins
-              if @prev_activities != '-' && selected?(@date, @prev_activities)
+              if @prev_activity != '-' && selected?(@date, @prev_context)
                 process_line(minutes, @prev_context, @prev_comment) 
               end
             else
@@ -81,7 +81,7 @@ module TimeTree
           end
            
           @prev_mins = minutes
-          @prev_activities = $2
+          @prev_activity = $2
           @prev_context = $2 unless %w{- &}.include?($2)
           @prev_comment = $3.size > 0 ? $3 : nil
           true
