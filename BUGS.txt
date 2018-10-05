@@ -1,1 +1,4 @@
-Pending When filter is used activities using & are ignored even if the ywould have matched
+* When filter is used activities using & are ignored even if they would have matched
+* Remove rspec depreciation warnings
+* Improve code quality with rubocop
+* Title to output. E.g. Date or query used

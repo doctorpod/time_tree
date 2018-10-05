@@ -3,7 +3,7 @@ require 'helper'
 
 module TimeTree
   describe FileParser do
-    let(:tree) { mock('ActivityTree', :load => nil) }
+    let(:tree) { double('ActivityTree', :load => nil) }
     let(:parser) { FileParser.new(tree, {}) }
     let(:home) { ENV['HOME'] }
 
@@ -11,12 +11,12 @@ module TimeTree
       it "finds a path" do
         parser.find_path(['/not/on/your/nelly', "#{home}/.bash_profile"]).should =~ /bash_profile/
       end
-      
+
       it "finds no path" do
-        parser.find_path(['/not/on/your/nelly', "#/not/there"]).should be_false
+        parser.find_path(['/not/on/your/nelly', "#/not/there"]).should be false
       end
     end
-    
+
     describe "#process_file" do
       context "is a directory" do
         before do
@@ -24,7 +24,7 @@ module TimeTree
         end
 
         it "returns true" do
-          parser.process_file(fixtures).should be_true
+          parser.process_file(fixtures).should be true
         end
 
         it "calls #process_folder" do
@@ -39,7 +39,7 @@ module TimeTree
         end
 
         it "returns true" do
-          parser.process_file(fixtures('time.txt')).should be_true
+          parser.process_file(fixtures('time.txt')).should be true
         end
 
         it "calls parse_line for each line of the file" do
@@ -54,12 +54,12 @@ module TimeTree
         end
 
         it "returns false" do
-          @result.should be_false
+          @result.should be false
         end
 
         it "flags an error and sets object invalid" do
           parser.errors.size.should == 1
-          parser.valid?.should be_false
+          parser.valid?.should be false
         end
       end
     end
@@ -97,7 +97,7 @@ module TimeTree
           let(:good_date) { '2013/04/23 some comments' }
 
           it "returns true" do
-            parser.parse_line(good_date).should be_true
+            parser.parse_line(good_date).should be true
           end
 
           it "calls set_date" do
@@ -110,7 +110,7 @@ module TimeTree
           let(:bad_date) { '201b/foo/bar' }
 
           it "returns false" do
-            parser.parse_line(bad_date).should be_false
+            parser.parse_line(bad_date).should be false
           end
 
           it "does not call set_date" do
@@ -130,13 +130,13 @@ module TimeTree
 
         context "normal activities" do
           it "returns true and remains valid" do
-            parser.parse_line("1634 adm/foo/bar dhffhkdhsdhjdf").should be_true
-            parser.parse_line("1635 adm/foo/bar dhffh kdh sdhjdf  ").should be_true
-            parser.parse_line("1636    adm/foo/bar     dhffh kdh sdhjdf  ").should be_true
-            parser.parse_line("1637 adm").should be_true
-            parser.parse_line("1638 -").should be_true
-            parser.parse_line("1639 - sdf sdfs sfsad").should be_true
-            parser.valid?.should be_true
+            parser.parse_line("1634 adm/foo/bar dhffhkdhsdhjdf").should be true
+            parser.parse_line("1635 adm/foo/bar dhffh kdh sdhjdf  ").should be true
+            parser.parse_line("1636    adm/foo/bar     dhffh kdh sdhjdf  ").should be true
+            parser.parse_line("1637 adm").should be true
+            parser.parse_line("1638 -").should be true
+            parser.parse_line("1639 - sdf sdfs sfsad").should be true
+            parser.valid?.should be true
           end
 
           it "calls ActivityTree#load after first line" do
@@ -144,7 +144,7 @@ module TimeTree
             parser.parse_line("1634 adm/foo/bar blart flange")
             parser.parse_line("1635 -")
           end
-          
+
           it "handles absent descriptions" do
             tree.should_receive(:load).with(%w{adm foo bar}, 1, nil).once
             parser.parse_line("1734 adm/foo/bar")
@@ -152,23 +152,23 @@ module TimeTree
           end
 
           it "flags invalid times" do
-            parser.parse_line("2435 - df sdfsdg").should be_false
-            parser.parse_line("2x3d - df sdfsdg").should be_false
-            parser.valid?.should be_false
+            parser.parse_line("2435 - df sdfsdg").should be false
+            parser.parse_line("2x3d - df sdfsdg").should be false
+            parser.valid?.should be false
           end
 
           it "flags non-advancing times" do
-            parser.parse_line("1253 - df sdfsdg").should be_true
-            parser.parse_line("1253 - df sdfsdg").should be_false
-            parser.valid?.should be_false
+            parser.parse_line("1253 - df sdfsdg").should be true
+            parser.parse_line("1253 - df sdfsdg").should be false
+            parser.valid?.should be false
           end
         end
       end
 
       context "dash for activity" do
         it "returns true and remains valid" do
-          parser.parse_line("1634 -").should be_true
-          parser.valid?.should be_true
+          parser.parse_line("1634 -").should be true
+          parser.valid?.should be true
         end
 
         it "does not call ActivityTree#load after first line" do
@@ -182,8 +182,8 @@ module TimeTree
         before { parser.set_date('2013/01/02') }
 
         it "returns true and remains valid" do
-          parser.parse_line("1634 &").should be_true
-          parser.valid?.should be_true
+          parser.parse_line("1634 &").should be true
+          parser.valid?.should be true
         end
 
         context "Previous activity immediately before" do
@@ -208,7 +208,7 @@ module TimeTree
 
       context "comment lines" do
         it "should return true" do
-          parser.parse_line("# a comment").should be_true
+          parser.parse_line("# a comment").should be true
         end
 
         it "should not log errors" do
@@ -220,18 +220,18 @@ module TimeTree
 
     describe "#selected?" do
       it "should be true if no date selectors" do
-        parser.selected?('2013/01/01', {:bish => true, :bosh => :tigers}).should be_true
+        parser.selected?('2013/01/01', {:bish => true, :bosh => :tigers}).should be true
       end
 
       context "today" do
         let(:options) { {:today => true} }
 
         it "should be true if date is today" do
-          parser.selected?(Time.now.strftime("%Y/%m/%d"), options).should be_true
+          parser.selected?(Time.now.strftime("%Y/%m/%d"), options).should be true
         end
 
         it "should be false if date is not today" do
-          parser.selected?('1962/01/03', '', options).should be_false
+          expect(parser.selected?('1962/01/03', '', options)).to be false
         end
       end
 
@@ -239,17 +239,17 @@ module TimeTree
         let(:options) { {:yesterday => true} }
 
         it "should be true if date is yesterday" do
-          parser.selected?((Time.now-(24*60*60)).strftime("%Y/%m/%d"), options).should be_true
+          parser.selected?((Time.now-(24*60*60)).strftime("%Y/%m/%d"), options).should be true
         end
 
         it "should be false if date is not yesterday" do
-          parser.selected?('1962/01/03', '', options).should be_false
+          parser.selected?('1962/01/03', '', options).should be false
         end
       end
-      
+
       context "week" do
       end
-      
+
       context "month" do
       end
 
@@ -257,11 +257,11 @@ module TimeTree
         let(:options) { {:date => '2012/01/01'} }
 
         it "should be true if date matches" do
-          parser.selected?('2012/01/01', options).should be_true
+          parser.selected?('2012/01/01', options).should be true
         end
 
         it "should be false if date does not match" do
-          parser.selected?('1962/01/03', '', options).should be_false
+          parser.selected?('1962/01/03', '', options).should be false
         end
       end
 
@@ -269,22 +269,22 @@ module TimeTree
         let(:options) { {:range => '2012/01/01:2012/01/02'} }
 
         it "should be true if date within" do
-          parser.selected?('2012/01/01', options).should be_true
-          parser.selected?('2012/01/02', options).should be_true
+          parser.selected?('2012/01/01', options).should be true
+          parser.selected?('2012/01/02', options).should be true
         end
 
         it "should be false if date outside" do
-          parser.selected?('1962/01/03', '', options).should be_false
+          parser.selected?('1962/01/03', '', options).should be false
         end
       end
-      
+
       context "filter" do
         it "finds a hit" do
-          parser.selected?('1962/01/03', 'foo/bar', {:filter => ['foo', 'boo']}).should be_true
+          parser.selected?('1962/01/03', 'foo/bar', {:filter => ['foo', 'boo']}).should be true
         end
 
         it "finds no hit" do
-          parser.selected?('1962/01/03', 'foo/bar', {:filter => ['blork', 'flange']}).should be_false
+          parser.selected?('1962/01/03', 'foo/bar', {:filter => ['blork', 'flange']}).should be false
         end
       end
     end
@@ -295,7 +295,7 @@ module TimeTree
           parser.send(:mins, '0000').should == 0
         end
       end
-      
+
       context "previous mins" do
         it "returns 1440 mins (1 day)" do
           parser.set_file('afile')

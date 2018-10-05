@@ -11,11 +11,11 @@ module TimeTree
       tree.load(%w{blah}, 11, 'did serious blah')
       tree.load(%w{blah}, 1, 'did more blah')
     end
-      
-    it "All should have 2 root activities" do  
+
+    it "All should have 2 root activities" do
       tree.activities['All'][:children].size.should == 2
     end
-    
+
     it "foo should have 15 mins" do
       tree.activities['All'][:children]['foo'][:minutes].should == 15
     end
@@ -54,10 +54,18 @@ module TimeTree
     it "blah should have no children" do
       tree.activities['All'][:children]['blah'][:children].size.should == 0
     end
-    
-    it "should print" do
-      tree.process
-      tree.print
+
+    context 'formatting' do
+      before { tree.process }
+
+      it 'spacing driven by width of activities' do
+        expect(tree.output[0]).to eq('All          27 min (0:27)')
+        expect(tree.output[1]).to eq('  blah       12 min (0:12)  did serious blah - did more blah')
+        expect(tree.output[2]).to eq('  foo        15 min (0:15)')
+        expect(tree.output[3]).to eq('    bar      15 min (0:15)')
+        expect(tree.output[4]).to eq('      bam     5 min (0:05)  did some bam')
+        expect(tree.output[5]).to eq('      baz    10 min (0:10)  did baz')
+      end
     end
   end
 end

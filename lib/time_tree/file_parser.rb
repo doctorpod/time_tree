@@ -3,7 +3,7 @@ require 'time_tree/date_calculator'
 
 module TimeTree
   class FileParser
-    include DateCalculator 
+    include DateCalculator
     attr_reader :errors
 
     def initialize(tree, options)
@@ -11,21 +11,21 @@ module TimeTree
       @activity_tree = tree
       @options = options
     end
-    
+
     def find_path(paths)
       paths.each do |path|
         return path if File.exist?(path)
       end
-      
+
       @errors << "File not found in: #{paths.join(', ')}"
       false
     end
-    
+
     def set_file(path)
       @path = path
       @line_number = 0
     end
-    
+
     def set_date(date)
       @date = date
       @prev_mins = nil
@@ -33,7 +33,7 @@ module TimeTree
       @prev_context = nil
       @prev_comment = nil
     end
-    
+
     def process_file(path)
       if File.exist?(path)
         if File.directory?(path)
@@ -48,16 +48,16 @@ module TimeTree
         false
       end
     end
-    
+
     def process_folder(path)
       Dir.new(path).each do |file|
         process_file(File.join(path, file)) unless file =~ /^\./
       end
     end
-    
+
     def parse_line(line)
       @line_number += 1
-      
+
       case line.chomp.sub(/#.*/, '').strip
       when ''
         # ignore blank lines and comments
@@ -72,14 +72,14 @@ module TimeTree
           unless @prev_mins.nil?
             if minutes > @prev_mins
               if @prev_activity != '-' && selected?(@date, @prev_context)
-                process_line(minutes, @prev_context, @prev_comment) 
+                process_line(minutes, @prev_context, @prev_comment)
               end
             else
               add_error(line, 'time does not advance')
               return false
             end
           end
-           
+
           @prev_mins = minutes
           @prev_activity = $2
           @prev_context = $2 unless %w{- &}.include?($2)
@@ -94,20 +94,20 @@ module TimeTree
         false
       end
     end
-    
+
     def add_error(line, message)
       @errors << "%s:%d: %s - %s" % [File.basename(@path), @line_number, line.chomp, message]
     end
-    
+
     def valid?
       errors.empty?
     end
-    
+
     def selected?(date = @date, activities = '', options = @options)
       date_options = [:today, :yesterday, :week, :month, :date, :range]
       parsed_date = Date.parse(date)
-      
-      (
+
+      !!(
         options.detect { |key, val| date_options.include?(key) }.nil? ||
           options[:all] ||
           options[:today] && parsed_date == Date.today ||
@@ -117,13 +117,13 @@ module TimeTree
           options[:date] && parsed_date == Date.parse(options[:date]) ||
           options[:range] && parsed_date >= Date.parse(options[:range].split(':').first) &&
                              parsed_date <= Date.parse(options[:range].split(':').last)
-      ) && 
-      (
+      ) &&
+      !!(
         options[:filter] && options[:filter].detect { |f| activities =~ Regexp.new(f) } ||
           options[:filter].nil?
       )
     end
-    
+
     private
 
     def process_line(minutes, activities, comment)
