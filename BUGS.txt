@@ -2,3 +2,4 @@
 * Remove rspec depreciation warnings
 * Improve code quality with rubocop
 * Title to output. E.g. Date or query used
+* Fix broken -v|--version option
