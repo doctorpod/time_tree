@@ -10,19 +10,31 @@ module TimeTree
       @errors = []
     end
 
+    # rubocop:disable Metric/MethodLength
     def parse(path, line)
       @line_number += 1
 
       case line.chomp.sub(/#.*/, '').strip
       when '' then true # ignore blank lines and comments
-      when %r{^(\d\d\d\d\/\d\d\/\d\d) *.*$} then save_date(Regexp.last_match(1))
-      when %r{^(\d\d\d\d) +([-&\w\/]+) *(.*)$}
+
+      # Date line
+      when %r{^(\d\d\d\d\/\d\d\/\d\d)\s*[\w\s]*\s*(\| (.*))?$}
+        # 1: date, 2: tags with leading pipe (not used), 3: tags (not used yet)
+        save_date(Regexp.last_match(1))
+
+      # Context tags - Not used yet
+      when /^\|(.+)$/ then true
+
+      # Event line
+      when %r{^(\d\d\d\d)\s+([-\w\/&]+)\s*([\w\s]+)*(\|\s*(.*))?$}
+        # 1: time, 2: activity, 3: description, 5: tags (not used yet)
         process_line(Regexp.last_match(1), Regexp.last_match(2),
                      Regexp.last_match(3), path, line)
 
       else add_error(path, line, 'line not understood')
       end
     end
+    # rubocop:enable Metric/MethodLength
 
     def valid?
       errors.empty?
@@ -80,7 +92,7 @@ module TimeTree
       @prev_mins = mins
       @prev_activity = activity
       @prev_context = activity unless %w[- &].include?(activity)
-      @prev_comment = comment.empty? ? nil : comment
+      @prev_comment = comment.nil? || comment.empty? ? nil : comment
     end
 
     def time_advances?(minutes, path, line)

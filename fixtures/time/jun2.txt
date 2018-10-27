@@ -1,4 +1,6 @@
-1975/06/02
+1975/06/02 | atag
+| some context tags
 1100 jun2stuff jun2
-1101 & more jun2 stuff
+|
+1101 & more jun2 stuff | atag anotherTag
 1102 -
