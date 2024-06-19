@@ -15,13 +15,13 @@ Blank lines are ignored. Sequences starting with # to the end of the line are ig
 Here's an example:
 
     2013/04/21 A splendid day! This text after the date will be ignored
-    
+
     0930 admin This is a description
     0945 development/project1 Some more descriptive text
     1005 -
     1030 developemnt/project2
     1115 -
-    
+
     # Did some work in the evening! This is a comment that will be ignored
     2230 bugfixing/project3 a description   # This will be ignored because it's a comment
     2315 -
@@ -41,7 +41,7 @@ Reports on the given date or period. Weeks are deemed to start on Monday.
   * *--today*, *-t* - this is the assumed default
   * *--yesterday*, *-y*
   * *--week [weeks-previous]*, *-w* - the current week so far. To report on previous weeks use the optional *weeks-previous* argument, 0 (the assumed default) would mean the current week, 1 would mean last week, 2 would mean the week previous to that and so on.
-  * *--month [months-previous]*, *-m* - the current calendar month so far. The optional *months-revious* argument works in a similar way to *--week weeks-previous*
+  * *--month [months-previous]*, *-m* - the current calendar month so far. The optional *months-previous* argument works in a similar way to *--week weeks-previous*
   * *--date YYYY/MM/DD*, *-d*
   * *--between YYYY/MM/DD:YYYY/MM/DD*, *-b* - reports on the given inclusive range of dates
   * *--filter search-string[,search-string]*, *-f* - only reports on activities matching *search-string*
